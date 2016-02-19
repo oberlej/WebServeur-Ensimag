@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+        version="2.4">
+
+        <!-- ========================================================== -->
+        <!-- General -->
+        <!-- ========================================================== -->
+
+        <!-- Name the application -->
+        <display-name>BMT</display-name>
+        <description>Simple bookmark-tag application</description>
+        
+        <!-- ========================================================== -->
+        <!-- Context Parameters -->
+        <!-- ========================================================== -->
+
+        <!--<context-param>
+                <description>Enable debugging for the application</description>
+                <param-name>debug</param-name>
+                <param-value>true</param-value>
+        </context-param> -->
+        
+        <!-- ========================================================== -->
+        <!-- JNDI Environment Variables -->
+        <!-- ========================================================== -->
+
+        <!--<env-entry>
+                <env-entry-name>webmasterName</env-entry-name>
+                <env-entry-value>Ms. W. Master</env-entry-value>
+                <env-entry-type>java.lang.String</env-entry-type>
+        </env-entry>-->
+
+        <!-- ========================================================== -->
+        <!-- Servlets -->
+        <!-- ========================================================== -->
+
+        <!-- Simple Servlet, provide a name, class, description and map to URL /servlet/SimpleServlet -->
+        <servlet>
+                <servlet-name>Global</servlet-name>
+                <servlet-class>GlobalServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+                <servlet-name>Global</servlet-name>
+                <url-pattern>/*</url-pattern>
+        </servlet-mapping>
+	<servlet>
+		<servlet-name>default</servlet-name>
+		<servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/testeur/*</url-pattern>
+	</servlet-mapping>	
+</web-app>
