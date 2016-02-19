@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My bookmarks on-line</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link rel="StyleSheet" href="Exercice-50.css" type="text/css">
+<script type="text/javascript" src="jquery-1.7.2-min.js"></script>
+<script type="text/javascript" src="json2.js"></script>
+<script type="text/javascript" src="Exercice-50.js"></script>
+</head>
+<body>
+  <h1><span class="identity"></span>'s Bookmarks</h1>
+
+  <ul id="menu">
+	<li class="bookmarks">Bookmarks</li>
+	<li class="tags">Tags</li>
+  </ul>
+
+  <div id="contents">
+  <form>
+	<div id="models">
+		<div class="model bookmark">
+			<h2>Title</h2>
+			<a href="link">link</a>
+			<div class="description">Description</div>
+			<ul class="tags"></ul>
+		</div>
+		<div class="model tag">
+			<h2>Name</h2>
+		</div>
+	</div>
+	<div id="items">
+	</div>
+	<div id="add">
+		<div class="tag">
+			<input type="text" name="name"><input type="button" name="addTag" id="addTag" value="New tag">
+		</div>
+	</div>
+  </form>
+  </div>
+</body>
+</html>
