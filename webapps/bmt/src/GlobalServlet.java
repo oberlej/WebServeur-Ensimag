@@ -105,7 +105,7 @@ public class GlobalServlet extends HttpServlet {
 	private static boolean decodeRequestQuery(HttpServletRequest req, HttpServletResponse resp,
 			Map<String, List<String>> queryParams) throws IOException {
 		// Get posted parameters
-		for (Entry<String,String[]>mp: req.getParameterMap().entrySet()){
+		for (Entry<String,String[]>mp: ((Map<String,String[]>) req.getParameterMap()).entrySet()){
 			List<String> list = queryParams.get(mp.getKey());
 			if (list==null) {
 				list = new ArrayList<String>();
