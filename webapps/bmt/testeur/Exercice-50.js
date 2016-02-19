@@ -1,5 +1,5 @@
 /* Base URL of the web-service for the current user */
-var wsBase = 'http://localhost:8080/bmt/chenalvi-oberlej/'
+var wsBase = 'http://localhost:8080/bmt/titi/'
 /* Shows the identity of the current user */
 function setIdentity() {
 	$("span.identity").prepend(wsBase.split("/")[4].replace("-"," & "));
