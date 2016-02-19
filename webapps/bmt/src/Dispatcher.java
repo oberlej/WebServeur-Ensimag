@@ -94,9 +94,19 @@ public class Dispatcher {
 			return;
 		}
 
-		// Response to /{login}/bookmarks...
+		// Response to /{login}/tags...
 		if ("bookmarks".equals(requestPath[1])) {
-			// TODO 3
+			if (requestPath.length == 2)
+				Bookmarks.handleBookmarkList(req, resp, method, requestPath, queryParams, user);
+			else if (requestPath.length == 3)
+				Bookmarks.handleBookmark(req, resp, method, requestPath, queryParams, user);
+			/*else if (requestPath.length == 4)
+				Bookmarks.handleTagBookmarks(req, resp, method, requestPath, queryParams, user);
+			else if (requestPath.length == 5)
+				Bookmarks.handleTagBookmark(req, resp, method, requestPath, queryParams, user);
+			else
+				resp.sendError(404);*/
+			return;
 		}
 
 		// Response to other requests
