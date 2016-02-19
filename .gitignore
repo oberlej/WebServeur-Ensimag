@@ -1,3 +1,5 @@
 *.class
 .classpath
 *.DS_STORE
+start.ini
+*.db
