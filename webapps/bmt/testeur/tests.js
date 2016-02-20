@@ -1,3 +1,17 @@
+/*
+Testing the Webserveur by executing ajax calls and testing the statusCode.
+Acces the test with http://localhost:8080/bmt/testeur/tests.html.
+All tests need to be made on tata DB.
+You can add a new test in the file tests.json with the following syntax:
+{
+	title : "",
+	url: "",
+	method : "",
+	retValue :""
+}
+*/
+
+
 $(document).ready(function(){
 	//clean the base first
 	$.ajax({
@@ -43,7 +57,7 @@ function addTest(test){
 	//replace titi or toto by tata since all tests are supposed to be made on this DB
 	test.url = test.url.replace("titi","tata");
 	test.url = test.url.replace("toto", "tata");
-	
+
 	html += "<a href='"+test.url+"'>"+test.url+"</a>";
 	html += "</td>";
 
