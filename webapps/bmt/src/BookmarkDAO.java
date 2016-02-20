@@ -57,6 +57,7 @@ public class BookmarkDAO {
 			stmt.setLong(2, user.getId());
 			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
+			
 			if(result.next()) {
 				b = new Bookmark(result.getLong(1), result.getString(2), result.getString(3), result.getString(4));
 			}else{

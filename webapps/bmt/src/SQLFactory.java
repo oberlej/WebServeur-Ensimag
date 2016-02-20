@@ -16,7 +16,7 @@ public class SQLFactory {
 	 */
 	public static String createSelectQueryByAttr(String[] columns, String attr, String tableName){
 		StringBuilder sb = new StringBuilder();
-		sb.append("select " + getCommaList(columns) + "from " + tableName + " where user_id=?");
+		sb.append("select " + getCommaList(columns) + " from " + tableName + " where user_id=?");
 		if(attr != null && attr.length() > 0){
 			sb.append(" and " + attr + "=?");
 		}
@@ -33,10 +33,14 @@ public class SQLFactory {
 		StringBuilder sb = new StringBuilder();
 		
 		//Create the string ?,?,?.... for the values clause
+		//-1 because we need all columns except the id
 		String x = "?,";
-		x = new String(new char[columns.length]).replace("\0", x);
+		x = new String(new char[columns.length-1]).replace("\0", x);
 		x = x.substring(0, x.length() - 1);
-		sb.append("insert into " + tableName + "(" + getCommaList(columns) + ") values (" + x + ")");
+		//delete the id column from the list
+		String list = getCommaList(columns);
+		list = list.substring(3, list.length());
+		sb.append("insert into " + tableName + "(" + list + ") values (" + x + ")");
 		return sb.toString();
 	}
 	

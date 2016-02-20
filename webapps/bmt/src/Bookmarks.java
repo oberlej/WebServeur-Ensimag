@@ -47,6 +47,7 @@ public class Bookmarks {
 			try {
 				bookmarks = BookmarkDAO.getBookmarks(user);
 			} catch (SQLException ex) {
+				System.out.println(ex);
 				resp.setStatus(500);
 				return;
 			}

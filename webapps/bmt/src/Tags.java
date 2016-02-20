@@ -53,6 +53,7 @@ public class Tags {
 			try {
 				tags = TagDAO.getTags(user);
 			} catch (SQLException ex) {
+				System.out.println(ex);
 				resp.setStatus(500);
 				return;
 			}
@@ -95,6 +96,7 @@ public class Tags {
 					TagDAO.saveTag(newTag, userDAO);
 				}
 			} catch (SQLException e) {
+				System.out.println(e);
 				e.printStackTrace();
 			}
 			

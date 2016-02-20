@@ -36,6 +36,7 @@ public class TagDAO {
 		try{
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, null, "Tag"));
 			stmt.setLong(1, user.getId());
+			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
 			while (result.next()) {
 				long id = result.getLong(1);
@@ -53,6 +54,7 @@ public class TagDAO {
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, "name", "Tag"));
 			stmt.setLong(1, user.getId());
 			stmt.setString(2, name);
+			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
 			
 			while (result.next()) {
@@ -70,6 +72,7 @@ public class TagDAO {
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(COLUMNS, "Tag"));
 			stmt.setString(1, tag.getName());
 			stmt.setLong(2, user.getId());
+			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
 		} finally{conn.close();}
 	}
