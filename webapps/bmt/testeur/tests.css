@@ -1,0 +1,17 @@
+h1 {
+	text-align: center;
+}
+
+table {
+	border: 1px solid black;
+}
+
+td{
+	min-width: 100px;
+}
+.ok{
+	background-color: green;
+}
+.ko {
+	background-color: red;
+}
