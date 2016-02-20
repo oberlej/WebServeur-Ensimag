@@ -189,7 +189,7 @@ public class SpecialActions {
 	}
 	
 	public static HashMap<String,String> jsonToHashMap(String json){
-		String[] arguments = json.substring(1, json.length()-1).replaceAll("\"", "").split(",");
+		String[] arguments = json.substring(1, json.length()-1).replaceAll("\"", "").replaceAll("'", "").split(",");
 		HashMap<String,String> valMap = new HashMap<String, String>();
 		for(String arg : arguments){
 			String key = arg.split(":")[0];

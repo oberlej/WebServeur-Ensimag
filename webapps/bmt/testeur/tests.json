@@ -1,4 +1,6 @@
 [
-{"title":"test1", "url": "test1/url", "retValue" : "204"},
-{"title":"test2", "url": "test2/url", "retValue" : "200"}
+{"title":"GET all bookmarks", "url": "http://localhost:8080/bmt/titi/bookmarks?x-http-method=get", "method": "GET", "retValue" : "200"},
+{"title":"Incorrect URL", "url": "test2/url", "retValue" : "404"},
+{"title":"test insert bookmark","url":"http://localhost:8080/bmt/toto/bookmarks?x-http-method=post&json={'title':'Facebook','description':'facebook','link':'facebook.com'}","method":"POST","retValue":"201"},
+{"title":"test insert doublon","url":"http://localhost:8080/bmt/tata/bookmarks?x-http-method=post&json={'title':'Facebook','description':'facebook','link':'facebook.com'}","method":"POST","retValue":"304"}
 ]

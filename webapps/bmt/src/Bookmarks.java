@@ -70,17 +70,23 @@ public class Bookmarks {
 		// Handle POST
 		//Creation of a new bookmark
 		if (method == Dispatcher.RequestMethod.POST) {
-			Bookmark b = null;
 			String json = queryParams.get("json").get(0);
 			HashMap<String,String> valMap = SpecialActions.jsonToHashMap(json);
 			try{
-				 int res = BookmarkDAO.createBookmark(valMap.get("description"),valMap.get("link"),valMap.get("title"),user.getId());
-				 if(res == 0){
-					 resp.setStatus(304);
-				 }
+				int res = BookmarkDAO.createBookmark(valMap.get("description"),valMap.get("link"),valMap.get("title"),user.getId());
+				if(res == 0){
+					resp.setStatus(304);
+				}else{
+					resp.setStatus(201);
+				}
 			} catch (SQLException ex) {
 				System.out.println(ex);
-				resp.setStatus(500);
+				if(ex.getMessage().contains("CONSTRAINT_INDEX_A ON PUBLIC.BOOKMARK(USER_ID, LINK)")){
+					//bookmark exists already
+					resp.setStatus(304);
+				}else{
+					resp.setStatus(500);
+				}
 			}
 			return;
 		}
@@ -121,26 +127,26 @@ public class Bookmarks {
 				return;
 			}
 			if(bookmark != null){
-			// Encode the bookmark list to JSON
-			String json = bookmark.toJson();
-			// Send the response
-			resp.setStatus(200);
-			resp.setContentType("application/json");
-			resp.getWriter().print(json);
+				// Encode the bookmark list to JSON
+				String json = bookmark.toJson();
+				// Send the response
+				resp.setStatus(200);
+				resp.setContentType("application/json");
+				resp.getWriter().print(json);
 			}else{
 				resp.setStatus(404);
 			}
 			return;
 		}
-		
+
 		// Handle PUT
 		if (method == Dispatcher.RequestMethod.PUT) {
-			
+
 		}
-		
+
 		// Handle DELETE
 		if (method == Dispatcher.RequestMethod.DELETE) {
-			
+
 		}
 
 		// Other
