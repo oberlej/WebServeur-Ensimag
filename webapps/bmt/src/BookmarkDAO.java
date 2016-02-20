@@ -11,6 +11,9 @@ import java.util.List;
  * @author Jeremia Oberle
  */
 public class BookmarkDAO {
+	
+	private static final String[] COLUMNS = {"id", "description", "link", "title", "user_id"};
+	
 	/**
 	 * SQL query to get all bookmarks
 	 */
@@ -34,7 +37,7 @@ public class BookmarkDAO {
 		List<Bookmark> list = new ArrayList<Bookmark>();
 		Connection conn = DBConnection.getConnection();
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQL_READ_BOOKMARKS);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, null, "Bookmark"));
 			stmt.setLong(1, user.getId());
 			ResultSet result = stmt.executeQuery();
 			while (result.next()) {
@@ -57,7 +60,7 @@ public class BookmarkDAO {
 		Bookmark b = null;
 		Connection conn = DBConnection.getConnection();
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQL_READ_BOOKMARK_FROM_ID);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, "id", "Bookmark"));
 			stmt.setLong(1, id);
 			stmt.setLong(2, user.getId());
 			ResultSet result = stmt.executeQuery();
@@ -75,7 +78,7 @@ public class BookmarkDAO {
 		Connection conn = DBConnection.getConnection();
 		int res = 0;
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQL_CREATE_BOOKMARK);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(COLUMNS, "Bookmark"));
 			stmt.setString(1, description);
 			stmt.setString(2, link);
 			stmt.setString(3, title);
