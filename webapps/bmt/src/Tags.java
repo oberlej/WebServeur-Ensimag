@@ -76,7 +76,28 @@ public class Tags {
 
 		// Handle POST
 		if (method == Dispatcher.RequestMethod.POST) {
-			// TODO 1
+			//User want to create a new tag
+			List<String> params = queryParams.get("json");
+			JSONObject jsonObject = new JSONObject( params.get(0));
+			
+			User userDAO = null;
+			Tag newTag = new Tag(jsonObject.getString("name"));
+			
+			
+			try {
+				userDAO = UserDAO.getUserByLogin(requestPath[0]);
+				
+				if(TagDAO.getTagByName( newTag.getName(), userDAO) != null){
+					resp.setStatus(304);
+					return;
+				}else{
+					TagDAO.saveTag(newTag, userDAO);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			
 		}
 
 		// Other
