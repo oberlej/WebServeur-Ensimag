@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -185,5 +186,16 @@ public class SpecialActions {
 
 		// Return
 		resp.setStatus(204);
+	}
+	
+	public static HashMap<String,String> jsonToHashMap(String json){
+		String[] arguments = json.substring(1, json.length()-1).replaceAll("\"", "").split(",");
+		HashMap<String,String> valMap = new HashMap<String, String>();
+		for(String arg : arguments){
+			String key = arg.split(":")[0];
+			String val = arg.split(":")[1];
+			valMap.put(key, val);
+		}
+		return valMap;
 	}
 }
