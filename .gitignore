@@ -1,3 +1,4 @@
 *.class
 .classpath
 *.DS_STORE
+*.db
