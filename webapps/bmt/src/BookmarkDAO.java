@@ -12,20 +12,11 @@ import java.util.List;
  */
 public class BookmarkDAO {
 	
+	/*
+	 * columns that represent the table Bookmark.
+	 */
 	private static final String[] COLUMNS = {"id", "description", "link", "title", "user_id"};
 	
-	/**
-	 * SQL query to get all bookmarks
-	 */
-	private static final String SQL_READ_BOOKMARKS = "select id, description, link, title from Bookmark where user_id=?";
-
-	/**
-	 * SQL query to get a single bookmark with its id
-	 */
-	private static final String SQL_READ_BOOKMARK_FROM_ID = "select id, description, link, title from Bookmark where id=? and user_id=?";
-
-	private  static final String SQL_CREATE_BOOKMARK = "insert into Bookmark(description, link, title, user_id) values (?,?,?,?)";
-
 	/**
 	 * Provides the bookmarks of a user.
 	 * 
@@ -39,6 +30,7 @@ public class BookmarkDAO {
 		try{
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, null, "Bookmark"));
 			stmt.setLong(1, user.getId());
+			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
 			while (result.next()) {
 				Bookmark bookmark = new Bookmark(result.getLong(1), result.getString(2), result.getString(3), result.getString(4));
@@ -63,6 +55,7 @@ public class BookmarkDAO {
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, "id", "Bookmark"));
 			stmt.setLong(1, id);
 			stmt.setLong(2, user.getId());
+			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
 			if(result.next()) {
 				b = new Bookmark(result.getLong(1), result.getString(2), result.getString(3), result.getString(4));
@@ -83,6 +76,7 @@ public class BookmarkDAO {
 			stmt.setString(2, link);
 			stmt.setString(3, title);
 			stmt.setLong(4, userId);
+			System.out.println("Execute : "+stmt);
 			res = stmt.executeUpdate();
 			if (res == 0) {
 				System.out.println("Error during insertion of bookmark: " + title);

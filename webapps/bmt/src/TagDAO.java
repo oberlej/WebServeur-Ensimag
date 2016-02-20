@@ -11,6 +11,9 @@ import java.util.List;
  * @author Jan Mikac, Sebastien Viardot
  */
 public class TagDAO {
+	
+	private static final String[] COLUMNS = {"id", "name", "user_id"};
+	
 	/**
 	 * SQL query for user login
 	 */
@@ -31,7 +34,7 @@ public class TagDAO {
 		List<Tag> list = new ArrayList<Tag>();
 		Connection conn = DBConnection.getConnection();
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQL_READ_TAGS);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, null, "Tag"));
 			stmt.setLong(1, user.getId());
 			ResultSet result = stmt.executeQuery();
 			while (result.next()) {
@@ -47,7 +50,7 @@ public class TagDAO {
 	public static Tag getTagByName(String name, User user) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQL_READ_TAG);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, "name", "Tag"));
 			stmt.setLong(1, user.getId());
 			stmt.setString(2, name);
 			ResultSet result = stmt.executeQuery();
@@ -64,7 +67,7 @@ public class TagDAO {
 	public static void saveTag(Tag tag, User user) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQL_CREATE_TAG);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(COLUMNS, "Tag"));
 			stmt.setString(1, tag.getName());
 			stmt.setLong(2, user.getId());
 			stmt.executeUpdate();

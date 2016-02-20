@@ -85,6 +85,7 @@ public class Tags {
 			
 			
 			try {
+				//TODO no need to get the user from the login bc we have the user passed to this function
 				userDAO = UserDAO.getUserByLogin(requestPath[0]);
 				
 				if(TagDAO.getTagByName( newTag.getName(), userDAO) != null){
