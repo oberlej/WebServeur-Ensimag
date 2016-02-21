@@ -44,6 +44,15 @@ public class SQLFactory {
 		return sb.toString();
 	}
 	
+	//TODO
+	public static String createUpdateQuery(){
+		return null;
+	}
+	
+	//TODO
+	public static String createDeleteQuery(){
+		return null;
+	}
 	
 	/**
 	 * Creates a string from a list of string. Each value is separated by a comma.
