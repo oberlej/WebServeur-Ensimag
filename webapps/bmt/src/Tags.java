@@ -47,7 +47,7 @@ public class Tags {
 			return;
 		}
 
-		// Handle GET
+		// Handle GET = Tags list
 		if (method == Dispatcher.RequestMethod.GET) {
 			// Get the tag list
 			List<Tag> tags = null;
@@ -75,9 +75,8 @@ public class Tags {
 			resp.getWriter().print(json);
 			return;
 		}
-
-		// Handle POST
-		if (method == Dispatcher.RequestMethod.POST) {
+		//Handle Post = Tag creation
+		else if (method == Dispatcher.RequestMethod.POST) {
 			//User want to create a new tag
 			List<String> params = queryParams.get("json");
 			JSONObject jsonObject = new JSONObject( params.get(0));
@@ -107,7 +106,7 @@ public class Tags {
 	}
 
 	/**
-	 * TODO comment
+	 * Handle the request for a specific tag
 	 * 
 	 * @param req
 	 * @param resp
@@ -120,9 +119,14 @@ public class Tags {
 			Dispatcher.RequestMethod method, String[] requestPath,
 			Map<String, List<String>> queryParams, User user) throws IOException{
 
+		if (method == Dispatcher.RequestMethod.POST){
+			resp.setStatus(405);
+			return;
+		}
+
 		if (method == Dispatcher.RequestMethod.GET) {
 			String json = null;
-			
+
 			try {
 				Tag tag = TagDAO.getTagByName(requestPath[2], user);
 				if(tag != null){
@@ -161,21 +165,20 @@ public class Tags {
 		}else if (method == Dispatcher.RequestMethod.PUT) {
 			List<String> params = queryParams.get("json");
 			JSONObject jsonObject = new JSONObject( params.get(0));
-			
+
 			try {
 				jsonObject.put("user_id", user.getId());
 				TagDAO.modifyTag(jsonObject);
 				resp.setStatus(204);
 				return;
 			} catch (SQLException e) {
-				e.printStackTrace();
-				resp.setStatus(204);
+				resp.setStatus(403);
 			}
 		}
 	}
 
 	/**
-	 * TODO comment
+	 * Handle the request that allows to retrieve a list of bookmarks that are linked to a specific tag
 	 * 
 	 * @param req
 	 * @param resp
@@ -188,12 +191,16 @@ public class Tags {
 			Dispatcher.RequestMethod method, String[] requestPath,
 			Map<String, List<String>> queryParams, User user) throws IOException {
 
-		System.out.println("Action: handleTagBookmarks - " + method + "-" + queryParams);
-		// TODO 2
+		if (method != Dispatcher.RequestMethod.GET) {
+			resp.setStatus(405);
+			return;
+		}
+
+		resp.setStatus(200);
 	}
 
 	/**
-	 * TODO comment
+	 * Handle the request that allow to bind tags to bookmarks
 	 * 
 	 * @param req
 	 * @param resp
@@ -205,7 +212,53 @@ public class Tags {
 	public static void handleTagBookmark(HttpServletRequest req, HttpServletResponse resp,
 			Dispatcher.RequestMethod method, String[] requestPath,
 			Map<String, List<String>> queryParams, User user) throws IOException {
-		System.out.println("Action: handleTagBookmark - " + method + "-" + queryParams);
-		// TODO 2
+		if (method == Dispatcher.RequestMethod.POST) {
+			resp.setStatus(405);
+			return;
+		}
+		
+		long tagId = Long.parseLong(requestPath[2]);
+		long bookmarkId = Long.parseLong(requestPath[4]);
+		
+		//Handle tag binding status
+		if (method == Dispatcher.RequestMethod.GET) {
+			try {
+				if(TagDAO.isTagBindedToBookmark(bookmarkId, tagId)){
+					resp.setStatus(204);
+					return;
+				}else{
+					resp.setStatus(404);
+					return;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		//Handle POST requests = bind a tag to a bookmark
+		else if(method == Dispatcher.RequestMethod.PUT){
+
+			try {
+				if(TagDAO.isTagBindedToBookmark(bookmarkId, tagId)){
+					resp.setStatus(304);
+					return;
+				}else{
+					TagDAO.bindTagToBookmark(bookmarkId, tagId);
+					resp.setStatus(204);
+					return;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		//Handle Tag binding removal
+		else if(method == Dispatcher.RequestMethod.DELETE){
+			try {
+				TagDAO.removeTagBindingToBookmark(bookmarkId, tagId);
+				resp.setStatus(204);
+				return;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
