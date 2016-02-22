@@ -70,10 +70,10 @@ public class Bookmarks {
 		// Handle POST
 		//Creation of a new bookmark
 		if (method == Dispatcher.RequestMethod.POST) {
-			String json = queryParams.get("json").get(0);
-			HashMap<String,String> valMap = SpecialActions.jsonToHashMap(json);
+			JSONObject json = new JSONObject(queryParams.get("json").get(0));
+			json.put("user_id", user.getId().toString());
 			try{
-				int res = BookmarkDAO.createBookmark(valMap.get("description"),valMap.get("link"),valMap.get("title"),user.getId());
+				int res = BookmarkDAO.createBookmark(json);
 				if(res == 0){
 					resp.setStatus(304);
 				}else{

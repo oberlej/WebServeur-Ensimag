@@ -1,5 +1,7 @@
 import java.util.HashMap;
 
+import org.json.JSONObject;
+
 /**
  * 
  * Factory to automate the SQL query creation.
@@ -30,19 +32,17 @@ public class SQLFactory {
 	 * @param tableName
 	 * @return
 	 */
-	public static String createInsertQuery(String[] columns, String tableName){
-		StringBuilder sb = new StringBuilder();
+	public static String createInsertQuery(JSONObject j, String tableName){
+		StringBuilder sbListe = new StringBuilder();
+		StringBuilder sbValues = new StringBuilder();
 		
-		//Create the string ?,?,?.... for the values clause
-		//-1 because we need all columns except the id
-		String x = "?,";
-		x = new String(new char[columns.length-1]).replace("\0", x);
-		x = x.substring(0, x.length() - 1);
-		//delete the id column from the list
-		String list = getCommaList(columns);
-		list = list.substring(3, list.length());
-		sb.append("insert into " + tableName + "(" + list + ") values (" + x + ")");
-		return sb.toString();
+		String pre = "";
+		for(String key : j.keySet()){
+			sbListe.append(pre + key);
+			sbValues.append(pre + "'" + j.get(key) + "'");
+			pre = ",";
+		}
+		return "Insert into " + tableName + "(" + sbListe + ") values (" + sbValues + ")";
 	}
 	
 	//TODO

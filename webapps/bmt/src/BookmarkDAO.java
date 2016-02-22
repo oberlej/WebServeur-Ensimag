@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 /**
  * Provides the data-base access object for bookmarks.
  * 
@@ -68,19 +70,15 @@ public class BookmarkDAO {
 		} finally{conn.close();}
 	}
 
-	public static int createBookmark(String description, String link, String title, Long userId) throws SQLException{
+	public static int createBookmark(JSONObject json) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 		int res = 0;
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(COLUMNS, "Bookmark"));
-			stmt.setString(1, description);
-			stmt.setString(2, link);
-			stmt.setString(3, title);
-			stmt.setLong(4, userId);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(json, "Bookmark"));
 			System.out.println("Execute : "+stmt);
 			res = stmt.executeUpdate();
 			if (res == 0) {
-				System.out.println("Error during insertion of bookmark: " + title);
+				System.out.println("Error during insertion of bookmark: " + json.getString("title"));
 			}
 		}finally{conn.close();}
 		return res;
