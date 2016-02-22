@@ -70,12 +70,14 @@ public class Dispatcher {
 		// Response to /{login}/clear
 		if (requestPath.length == 2 && "clean".equals(requestPath[1])) {
 			SpecialActions.clean(req, resp, method, requestPath, queryParams, user);
+			resp.setStatus(204);
 			return;
 		}
 
 		// Response to /{login}/reinit
 		if (requestPath.length == 2 && "reinit".equals(requestPath[1])) {
 			SpecialActions.reinit(req, resp, method, requestPath, queryParams, user);
+			resp.setStatus(204);
 			return;
 		}
 
