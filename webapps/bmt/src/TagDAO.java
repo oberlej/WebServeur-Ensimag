@@ -113,4 +113,39 @@ public class TagDAO {
 			stmt.executeUpdate();
 		}finally{conn.close();}
 	}
+	
+	public static void bindTagToBookmark(long bookmarkId, long tagId) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+
+		try{
+			PreparedStatement stmt = conn.prepareStatement("insert into Bookmark_Tag Values("+bookmarkId+","+tagId+")");
+			System.out.println("Execute : "+stmt);
+			stmt.executeUpdate();
+		}finally{conn.close();}
+	}
+	
+	public static void removeTagBindingToBookmark(long bookmarkId, long tagId) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+
+		try{
+			PreparedStatement stmt = conn.prepareStatement("delete from Bookmark_Tag where Bookmarks_id="+bookmarkId+" and Tags_id="+tagId+")");
+			System.out.println("Execute : "+stmt);
+			stmt.executeUpdate();
+		}finally{conn.close();}
+	}
+	
+	public static boolean isTagBindedToBookmark(long bookmarkId, long tagId) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+
+		try{
+			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark_Tag Where Bookmarks_id="+bookmarkId+" and Tags_id="+tagId);
+			System.out.println("Execute : "+stmt);
+			ResultSet r = stmt.executeQuery();
+			return r.getFetchSize() > 0 ? true : false;
+		}catch(Exception e){
+		System.out.println("");
+		return false;
+		}
+		finally{conn.close();}
+	}
 }
