@@ -88,7 +88,10 @@ public class BookmarkDAO {
 		Connection conn = DBConnection.getConnection();
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery("Bookmark"));
+			JSONObject j = new JSONObject();
+			j.put("user_id", userId);
+			j.put("id", id);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery(j,"Bookmark"));
 			
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
@@ -97,16 +100,11 @@ public class BookmarkDAO {
 
 	}
 	
-	public static void updateBookmark(String description, String link, String title, Long id, Long userId) throws SQLException{
+	public static void updateBookmark(JSONObject bookmarkJson) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createUpdateQuery(COLUMNS, "Bookmark"));
-			stmt.setString(1, description);
-			stmt.setString(2, link);
-			stmt.setString(3, title);
-			stmt.setLong(4, userId);
-			stmt.setLong(5, id);
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createUpdateQuery(bookmarkJson, "Bookmark"));
 			System.out.println("Execute : "+stmt);
 
 		}finally{conn.close();}

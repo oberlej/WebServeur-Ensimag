@@ -142,10 +142,10 @@ public class Bookmarks {
 		// Handle PUT
 		if (method == Dispatcher.RequestMethod.PUT) {
 			// Get the bookmark list
-			String json = queryParams.get("json").get(0);
-			HashMap<String,String> valMap = SpecialActions.jsonToHashMap(json);
+			JSONObject jsonObject = new JSONObject(queryParams.get("json").get(0));
+			jsonObject.put("user_id", user.getId());
 			try{
-				BookmarkDAO.updateBookmark(valMap.get("description"), valMap.get("link"), valMap.get("link"), Long.parseLong(valMap.get("id")), user.getId());
+				BookmarkDAO.updateBookmark(jsonObject);
 			} catch (SQLException ex) {
 				resp.setStatus(500);
 				System.out.println(ex);
