@@ -53,6 +53,7 @@ public class Tags {
 			try {
 				tags = TagDAO.getTags(user);
 			} catch (SQLException ex) {
+				System.out.println(ex);
 				resp.setStatus(500);
 				return;
 			}
@@ -85,6 +86,7 @@ public class Tags {
 			
 			
 			try {
+				//TODO no need to get the user from the login bc we have the user passed to this function
 				userDAO = UserDAO.getUserByLogin(requestPath[0]);
 				
 				if(TagDAO.getTagByName( newTag.getName(), userDAO) != null){
@@ -96,6 +98,7 @@ public class Tags {
 					return;
 				}
 			} catch (SQLException e) {
+				System.out.println(e);
 				e.printStackTrace();
 			}
 			

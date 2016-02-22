@@ -1,8 +1,6 @@
 *.class
 .classpath
 *.DS_STORE
+*.db
 start.ini
-TP5.h2.db
-TP5.lock.db
-TP5.trace.db
 *.pdf

@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -46,6 +47,7 @@ public class Bookmarks {
 			try {
 				bookmarks = BookmarkDAO.getBookmarks(user);
 			} catch (SQLException ex) {
+				System.out.println(ex);
 				resp.setStatus(500);
 				return;
 			}
@@ -66,8 +68,85 @@ public class Bookmarks {
 		}
 
 		// Handle POST
+		//Creation of a new bookmark
 		if (method == Dispatcher.RequestMethod.POST) {
-			// TODO 1
+			String json = queryParams.get("json").get(0);
+			HashMap<String,String> valMap = SpecialActions.jsonToHashMap(json);
+			try{
+				int res = BookmarkDAO.createBookmark(valMap.get("description"),valMap.get("link"),valMap.get("title"),user.getId());
+				if(res == 0){
+					resp.setStatus(304);
+				}else{
+					resp.setStatus(201);
+				}
+			} catch (SQLException ex) {
+				System.out.println(ex);
+				if(ex.getMessage().contains("CONSTRAINT_INDEX_A ON PUBLIC.BOOKMARK(USER_ID, LINK)")){
+					//bookmark exists already
+					resp.setStatus(304);
+				}else{
+					resp.setStatus(500);
+				}
+			}
+			return;
+		}
+
+		// Other
+		resp.setStatus(405);
+	}
+
+	/**
+	 * Handle requests for a single bookmark
+	 * 
+	 * @param req
+	 * @param resp
+	 * @param method
+	 * @param requestPath
+	 * @param queryParams
+	 * @param user
+	 */
+	public static void handleBookmark(HttpServletRequest req, HttpServletResponse resp,
+			Dispatcher.RequestMethod method, String[] requestPath,
+			Map<String, List<String>> queryParams, User user) throws IOException{
+		System.out.println("Action: handleBookmark - " + method + "-" + queryParams);
+		if (method == Dispatcher.RequestMethod.POST) {
+			resp.setStatus(405);
+			return;
+		}
+
+		// Handle GET
+		if (method == Dispatcher.RequestMethod.GET) {
+			// Get the bookmark list
+			Bookmark bookmark = null;
+			try {
+				int x = Integer.parseInt(requestPath[2]);
+				bookmark = BookmarkDAO.getBookmarkById(user,x);
+			} catch (SQLException ex) {
+				resp.setStatus(500);
+				System.out.println(ex);
+				return;
+			}
+			if(bookmark != null){
+				// Encode the bookmark list to JSON
+				String json = bookmark.toJson();
+				// Send the response
+				resp.setStatus(200);
+				resp.setContentType("application/json");
+				resp.getWriter().print(json);
+			}else{
+				resp.setStatus(404);
+			}
+			return;
+		}
+
+		// Handle PUT
+		if (method == Dispatcher.RequestMethod.PUT) {
+
+		}
+
+		// Handle DELETE
+		if (method == Dispatcher.RequestMethod.DELETE) {
+
 		}
 
 		// Other
@@ -84,27 +163,10 @@ public class Bookmarks {
 	 * @param queryParams
 	 * @param user
 	 */
-	public static void handleBookmark(HttpServletRequest req, HttpServletResponse resp,
-			Dispatcher.RequestMethod method, String[] requestPath,
-			Map<String, List<String>> queryParams, User user) throws IOException{
-		System.out.println("Action: handleBookmark - " + method + "-" + queryParams);
-		// TODO 2
-	}
-
-	/**
-	 * TODO comment
-	 * 
-	 * @param req
-	 * @param resp
-	 * @param method
-	 * @param requestPath
-	 * @param queryParams
-	 * @param user
-	 */
 	public static void handleBookmarkBookmarks(HttpServletRequest req, HttpServletResponse resp,
 			Dispatcher.RequestMethod method, String[] requestPath,
 			Map<String, List<String>> queryParams, User user) throws IOException {
-		
+
 		System.out.println("Action: handleBookmarkBookmarks - " + method + "-" + queryParams);
 		// TODO 2
 	}
