@@ -45,26 +45,28 @@ public class SQLFactory {
 		return "Insert into " + tableName + "(" + sbListe + ") values (" + sbValues + ")";
 	}
 	
-	//TODO
-	public static String createUpdateQuery(String[] columns, String tableName){
+	public static String createUpdateQuery(JSONObject j, String tableName){
 		StringBuilder sb = new StringBuilder();
+		StringBuilder sbliste = new StringBuilder();
 		
-		sb.append("update "+tableName + " set ");
 		String prefix = "";
-		for(String c : columns){
-			sb.append(prefix + c + "=?");
+		
+		for(String key : j.keySet()){
+			sbliste.append(prefix);
+			if(j.get(key) instanceof Long){
+				sbliste.append(key+"="+j.get(key));
+			}else{
+				sbliste.append(key+"='"+j.get(key)+"'");
+			}
 			prefix = ",";
 		}
-		sb.append(" where user_id=? and id=?");
+		
+		sb.append("update "+tableName+" set "+sbliste+" where user_id="+j.getLong("user_id")+" and id="+j.getLong("id"));
 		return sb.toString();
 	}
 	
-	//TODO
-	public static String createDeleteQuery(String tableName){
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("delete from " + tableName + " where user_id=? and id=?");
-		return sb.toString();
+	public static String createDeleteQuery(JSONObject j,String tableName){
+		return "delete from " + tableName + " where user_id="+j.getLong("user_id")+" and id="+j.getLong("id");
 	}
 	
 	/**
