@@ -69,6 +69,13 @@ public class SQLFactory {
 		return "delete from " + tableName + " where user_id="+j.getLong("user_id")+" and id="+j.getLong("id");
 	}
 	
+	public static String createBookmarkListByTagQuery(long tagId){
+		
+		String request = "Select * From Bookmark Where id EXISTS (Select Bookmarks_id From Bookmark_Tag Where Tags_id="+tagId+")";
+		
+		return request;
+	}
+	
 	/**
 	 * Creates a string from a list of string. Each value is separated by a comma.
 	 * @param columns
