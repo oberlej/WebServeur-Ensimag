@@ -16,7 +16,7 @@ public class TagDAO {
 	 */
 	private static final String SQL_READ_TAGS = "select id,name from Tag where user_id=?";
 	private static final String SQL_READ_TAG = "select id,name from Tag where user_id=? and name=?";
-	private static final String SQL_CREATE_TAG = "insert into Tag values (?,?)";
+	private static final String SQL_CREATE_TAG = "insert into Tag(name,user_id) values (?,?)";
 
 	/**
 	 * Provides the tags of a user.

@@ -92,6 +92,8 @@ public class Tags {
 					return;
 				}else{
 					TagDAO.saveTag(newTag, userDAO);
+					resp.setStatus(201);
+					return;
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -117,8 +119,19 @@ public class Tags {
 	public static void handleTag(HttpServletRequest req, HttpServletResponse resp,
 			Dispatcher.RequestMethod method, String[] requestPath,
 			Map<String, List<String>> queryParams, User user) throws IOException{
-		System.out.println("Action: handleTag - " + method + "-" + queryParams);
-		// TODO 2
+		
+		if (method == Dispatcher.RequestMethod.GET) {
+			// Get the tag list
+			List<Tag> tags = null;
+			
+			String json = null;
+			// Send the response
+			resp.setStatus(200);
+			resp.setContentType("application/json");
+			resp.getWriter().print(json);
+			return;
+		}
+		
 	}
 
 	/**
