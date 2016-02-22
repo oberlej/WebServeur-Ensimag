@@ -19,7 +19,7 @@ public class TagDAO {
 	 */
 	private static final String SQL_READ_TAGS = "select id,name from Tag where user_id=?";
 	private static final String SQL_READ_TAG = "select id,name from Tag where user_id=? and name=?";
-	private static final String SQL_CREATE_TAG = "insert into Tag values (?,?)";
+	private static final String SQL_CREATE_TAG = "insert into Tag(name,user_id) values (?,?)";
 
 	/**
 	 * Provides the tags of a user.
@@ -72,6 +72,16 @@ public class TagDAO {
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(COLUMNS, "Tag"));
 			stmt.setString(1, tag.getName());
 			stmt.setLong(2, user.getId());
+			System.out.println("Execute : "+stmt);
+			stmt.executeUpdate();
+		} finally{conn.close();}
+	}
+	
+	public static void removeTag(Tag tag, User user) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		try{
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery());
+			stmt.setLong(1, user.getId());
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
 		} finally{conn.close();}
