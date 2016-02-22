@@ -1,3 +1,4 @@
+import java.util.HashMap;
 
 /**
  * 
@@ -45,13 +46,25 @@ public class SQLFactory {
 	}
 	
 	//TODO
-	public static String createUpdateQuery(){
-		return null;
+	public static String createUpdateQuery(String[] columns, String tableName){
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("update "+tableName + " set ");
+		String prefix = "";
+		for(String c : columns){
+			sb.append(prefix + c + "=?");
+			prefix = ",";
+		}
+		sb.append(" where user_id=? and id=?");
+		return sb.toString();
 	}
 	
 	//TODO
-	public static String createDeleteQuery(){
-		return null;
+	public static String createDeleteQuery(String tableName){
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("delete from " + tableName + " where user_id=? and id=?");
+		return sb.toString();
 	}
 	
 	/**

@@ -85,4 +85,33 @@ public class BookmarkDAO {
 		}finally{conn.close();}
 		return res;
 	}
+	
+	public static void deleteBookmark(Long userId, Long id) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+
+		try{
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery("Bookmark"));
+			
+			System.out.println("Execute : "+stmt);
+			stmt.executeUpdate();
+
+		}finally{conn.close();}
+
+	}
+	
+	public static void updateBookmark(String description, String link, String title, Long id, Long userId) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+
+		try{
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createUpdateQuery(COLUMNS, "Bookmark"));
+			stmt.setString(1, description);
+			stmt.setString(2, link);
+			stmt.setString(3, title);
+			stmt.setLong(4, userId);
+			stmt.setLong(5, id);
+			System.out.println("Execute : "+stmt);
+
+		}finally{conn.close();}
+
+	}
 }

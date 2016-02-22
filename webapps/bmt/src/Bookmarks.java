@@ -141,12 +141,29 @@ public class Bookmarks {
 
 		// Handle PUT
 		if (method == Dispatcher.RequestMethod.PUT) {
-
+			// Get the bookmark list
+			String json = queryParams.get("json").get(0);
+			HashMap<String,String> valMap = SpecialActions.jsonToHashMap(json);
+			try{
+				BookmarkDAO.updateBookmark(valMap.get("description"), valMap.get("link"), valMap.get("link"), Long.parseLong(valMap.get("id")), user.getId());
+			} catch (SQLException ex) {
+				resp.setStatus(500);
+				System.out.println(ex);
+				return;
+			}
+			
+			return;
 		}
 
 		// Handle DELETE
 		if (method == Dispatcher.RequestMethod.DELETE) {
-
+			try{
+				BookmarkDAO.deleteBookmark(user.getId(), Long.parseLong(requestPath[2]));
+			} catch (SQLException ex) {
+				resp.setStatus(500);
+				System.out.println(ex);
+				return;
+			}
 		}
 
 		// Other
