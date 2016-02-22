@@ -76,4 +76,14 @@ public class TagDAO {
 			stmt.executeUpdate();
 		} finally{conn.close();}
 	}
+	
+	public static void removeTag(Tag tag, User user) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		try{
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery());
+			stmt.setLong(1, user.getId());
+			System.out.println("Execute : "+stmt);
+			stmt.executeUpdate();
+		} finally{conn.close();}
+	}
 }

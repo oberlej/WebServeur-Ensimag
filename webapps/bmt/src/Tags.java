@@ -80,15 +80,14 @@ public class Tags {
 			//User want to create a new tag
 			List<String> params = queryParams.get("json");
 			JSONObject jsonObject = new JSONObject( params.get(0));
-			
+
 			User userDAO = null;
 			Tag newTag = new Tag(jsonObject.getString("name"));
-			
-			
+
+
 			try {
-				//TODO no need to get the user from the login bc we have the user passed to this function
-				userDAO = UserDAO.getUserByLogin(requestPath[0]);
-				
+				userDAO = UserDAO.getUserByLogin(user.getLogin());
+
 				if(TagDAO.getTagByName( newTag.getName(), userDAO) != null){
 					resp.setStatus(304);
 					return;
@@ -101,8 +100,8 @@ public class Tags {
 				System.out.println(e);
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 
 		// Other
@@ -122,19 +121,49 @@ public class Tags {
 	public static void handleTag(HttpServletRequest req, HttpServletResponse resp,
 			Dispatcher.RequestMethod method, String[] requestPath,
 			Map<String, List<String>> queryParams, User user) throws IOException{
-		
+
 		if (method == Dispatcher.RequestMethod.GET) {
-			// Get the tag list
-			List<Tag> tags = null;
-			
 			String json = null;
-			// Send the response
-			resp.setStatus(200);
-			resp.setContentType("application/json");
-			resp.getWriter().print(json);
+			
+			try {
+				Tag tag = TagDAO.getTagByName(requestPath[2], user);
+				if(tag != null){
+					json = tag.toJson();
+					// Send the response
+					resp.setStatus(200);
+					resp.setContentType("application/json");
+					resp.getWriter().print(json);
+					return;
+				}else{
+					resp.setStatus(404);
+					return;
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}else if (method == Dispatcher.RequestMethod.DELETE) {
+			// Get the tag list
+			try {
+				Tag tag = TagDAO.getTagByName(requestPath[2], user);
+				if(tag != null){
+					//Remove the tag
+					
+					// Send the response
+					resp.setStatus(204);
+				}else{
+					// Send the response
+					resp.setStatus(403);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			
+			
 			return;
 		}
-		
 	}
 
 	/**
@@ -150,7 +179,7 @@ public class Tags {
 	public static void handleTagBookmarks(HttpServletRequest req, HttpServletResponse resp,
 			Dispatcher.RequestMethod method, String[] requestPath,
 			Map<String, List<String>> queryParams, User user) throws IOException {
-		
+
 		System.out.println("Action: handleTagBookmarks - " + method + "-" + queryParams);
 		// TODO 2
 	}
