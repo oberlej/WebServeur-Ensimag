@@ -3,7 +3,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import org.json.JSONObject;
 
 /**
  * Provides the data-base access object for tags.
@@ -66,24 +69,48 @@ public class TagDAO {
 		} finally{conn.close();}
 	}
 	
-	public static void saveTag(Tag tag, User user) throws SQLException{
+	public static Tag getTagById(long id, User user) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(COLUMNS, "Tag"));
-			stmt.setString(1, tag.getName());
-			stmt.setLong(2, user.getId());
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, "id", "Tag"));
+			stmt.setLong(1, user.getId());
+			stmt.setLong(2, id);
+			System.out.println("Execute : "+stmt);
+			ResultSet result = stmt.executeQuery();
+			
+			while (result.next()) {
+				long idtmp = result.getLong(1);
+				String tagName = result.getString(2);
+				return new Tag(idtmp, tagName);
+			}
+			return null;
+		} finally{conn.close();}
+	}
+	
+	public static void saveTag(JSONObject tag) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		try{
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(tag, "Tag"));
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
 		} finally{conn.close();}
 	}
 	
-	public static void removeTag(Tag tag, User user) throws SQLException{
+	public static void removeTag(JSONObject tag, User user) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 		try{
-			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery());
-			stmt.setLong(1, user.getId());
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery(tag,"Tag"));
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
 		} finally{conn.close();}
+	}
+	
+	public static void modifyTag(JSONObject tag) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		try{
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createUpdateQuery(tag, "Tag"));
+			System.out.println("Execute : "+stmt);
+			stmt.executeUpdate();
+		}finally{conn.close();}
 	}
 }

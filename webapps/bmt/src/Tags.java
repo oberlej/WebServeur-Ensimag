@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -82,17 +83,16 @@ public class Tags {
 			JSONObject jsonObject = new JSONObject( params.get(0));
 
 			User userDAO = null;
-			Tag newTag = new Tag(jsonObject.getString("name"));
-
 
 			try {
 				userDAO = UserDAO.getUserByLogin(user.getLogin());
 
-				if(TagDAO.getTagByName( newTag.getName(), userDAO) != null){
+				if(TagDAO.getTagByName( jsonObject.getString("name"), userDAO) != null){
 					resp.setStatus(304);
 					return;
 				}else{
-					TagDAO.saveTag(newTag, userDAO);
+					jsonObject.put("user_id", user.getId());
+					TagDAO.saveTag(jsonObject);
 					resp.setStatus(201);
 					return;
 				}
@@ -100,8 +100,6 @@ public class Tags {
 				System.out.println(e);
 				e.printStackTrace();
 			}
-
-
 		}
 
 		// Other
@@ -145,10 +143,11 @@ public class Tags {
 		}else if (method == Dispatcher.RequestMethod.DELETE) {
 			// Get the tag list
 			try {
-				Tag tag = TagDAO.getTagByName(requestPath[2], user);
+				Tag tag = TagDAO.getTagById(Long.parseLong(requestPath[2]), user);
 				if(tag != null){
 					//Remove the tag
-					
+					JSONObject jsonObject = new JSONObject(tag.toJson());
+					TagDAO.removeTag(jsonObject, user);
 					// Send the response
 					resp.setStatus(204);
 				}else{
@@ -159,10 +158,19 @@ public class Tags {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-
+		}else if (method == Dispatcher.RequestMethod.PUT) {
+			List<String> params = queryParams.get("json");
+			JSONObject jsonObject = new JSONObject( params.get(0));
 			
-			
-			return;
+			try {
+				jsonObject.put("user_id", user.getId());
+				TagDAO.modifyTag(jsonObject);
+				resp.setStatus(204);
+				return;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				resp.setStatus(204);
+			}
 		}
 	}
 
