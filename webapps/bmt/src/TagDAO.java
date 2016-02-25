@@ -154,7 +154,7 @@ public class TagDAO {
 		List<Bookmark> bookmarks = new ArrayList<Bookmark>();
 		
 		try{
-			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark Where id EXISTS (Select Bookmarks_id From Bookmark_Tag Where Tags_id="+tagId+")");
+			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark Where id IN (Select Bookmarks_id From Bookmark_Tag Where Tags_id="+tagId+")");
 			System.out.println("Execute : "+stmt);
 			ResultSet r = stmt.executeQuery();
 			
