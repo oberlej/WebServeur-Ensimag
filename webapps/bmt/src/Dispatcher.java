@@ -80,6 +80,14 @@ public class Dispatcher {
 			resp.setStatus(204);
 			return;
 		}
+		
+		// Response to /{login}/binding
+		if (requestPath.length == 2 && "binding".equals(requestPath[1])) {
+			
+			Tags.handleBinding(req, resp, method, requestPath, queryParams, user);
+			
+			return;
+		}
 
 		// Response to /{login}/tags...
 		if ("tags".equals(requestPath[1])) {

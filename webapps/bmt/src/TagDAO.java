@@ -148,4 +148,44 @@ public class TagDAO {
 		}
 		finally{conn.close();}
 	}
+	
+	public static List<Bookmark> getBookmarksBindedToTag(long tagId) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		List<Bookmark> bookmarks = new ArrayList<Bookmark>();
+		
+		try{
+			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark Where id EXISTS (Select Bookmarks_id From Bookmark_Tag Where Tags_id="+tagId+")");
+			System.out.println("Execute : "+stmt);
+			ResultSet r = stmt.executeQuery();
+			
+			while(r.next()){
+				bookmarks.add(new Bookmark(r.getLong("id"), r.getString("description"), r.getString("link"), r.getString("title")));
+			}
+		}catch(Exception e){
+			System.out.println("");
+		}
+		finally{conn.close();}
+		
+		return bookmarks;
+	}
+	
+	public static List<Binding> getBindings() throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		List<Binding> bindings = new ArrayList<Binding>();
+		
+		try{
+			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark_Tag");
+			System.out.println("Execute : "+stmt);
+			ResultSet r = stmt.executeQuery();
+			
+			while(r.next()){
+				bindings.add(new Binding(r.getLong("Bookmarks_id"),r.getLong("Tags_id")));
+			}
+		}catch(Exception e){
+			System.out.println("");
+		}
+		finally{conn.close();}
+		
+		return bindings;
+	}
 }

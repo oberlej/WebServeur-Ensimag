@@ -196,6 +196,33 @@ public class Tags {
 			return;
 		}
 
+		long tagId = Long.parseLong(requestPath[2]);
+		String json = null;
+
+		try {
+			List<Bookmark> bookmarks = TagDAO.getBookmarksBindedToTag(tagId);
+			if(bookmarks != null){
+				JSONArray array = new JSONArray();
+				for(Bookmark b : bookmarks){
+					JSONObject j = new JSONObject(b.toJson());
+					array.put(j);
+				}
+
+				json = array.toString();
+				// Send the response
+				resp.setStatus(200);
+				resp.setContentType("application/json");
+				resp.getWriter().print(json);
+				return;
+			}else{
+				resp.setStatus(404);
+				return;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		resp.setStatus(200);
 	}
 
@@ -216,10 +243,10 @@ public class Tags {
 			resp.setStatus(405);
 			return;
 		}
-		
+
 		long tagId = Long.parseLong(requestPath[2]);
 		long bookmarkId = Long.parseLong(requestPath[4]);
-		
+
 		//Handle tag binding status
 		if (method == Dispatcher.RequestMethod.GET) {
 			try {
@@ -259,6 +286,39 @@ public class Tags {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public static void handleBinding(HttpServletRequest req, HttpServletResponse resp,
+			Dispatcher.RequestMethod method, String[] requestPath,
+			Map<String, List<String>> queryParams, User user) throws IOException {
+		if (method != Dispatcher.RequestMethod.GET) {
+			resp.setStatus(405);
+			return;
+		}
+		String json = null;
+		try {
+			List<Binding> bindings = TagDAO.getBindings();
+			if(bindings != null){
+				JSONArray array = new JSONArray();
+				for(Binding b : bindings){
+					JSONObject j = new JSONObject(b.toJson());
+					array.put(j);
+				}
+
+				json = array.toString();
+				// Send the response
+				resp.setStatus(200);
+				resp.setContentType("application/json");
+				resp.getWriter().print(json);
+				return;
+			}else{
+				resp.setStatus(404);
+				return;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }
