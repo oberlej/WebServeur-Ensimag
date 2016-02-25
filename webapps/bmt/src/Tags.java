@@ -151,6 +151,7 @@ public class Tags {
 				if(tag != null){
 					//Remove the tag
 					JSONObject jsonObject = new JSONObject(tag.toJson());
+					jsonObject.put("user_id", user.getId());
 					TagDAO.removeTag(jsonObject, user);
 					// Send the response
 					resp.setStatus(204);
