@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * // Class  of a Bookmark 
  * 
@@ -28,11 +30,26 @@ public class Bookmark {
 	private String title;
 	
 	/**
+	 * Bookmark tags
+	 */
+	private List<Tag> tags;
+	
+	/**
 	 * @param id
 	 * @param description
 	 * @param link
 	 * @param title
+	 * @param tags
 	 */
+	public Bookmark(long id, String description, String link, String title, List<Tag> tags) {
+		super();
+		this.id = id;
+		this.setDescription(description);
+		this.setLink(link);
+		this.title = title;
+		this.tags = tags;
+	}
+	
 	public Bookmark(long id, String description, String link, String title) {
 		super();
 		this.id = id;
@@ -66,6 +83,7 @@ public class Bookmark {
 	 * @return JSON representation of the bookmark
 	 */
 	public String toJson() {
+		String prefix = "";
 		String json = "{";
 		json += "\"id\":" + id;
 		json += ", ";
@@ -74,7 +92,14 @@ public class Bookmark {
 		json += "\"description\":\"" + this.description + "\"";
 		json += ", ";
 		json += "\"link\":\"" + this.link + "\"";
-		//TODO liste des tags
+		json += ", ";
+		json +="\"tags\":[";
+		for(Tag t : this.tags){
+			json += prefix;
+			json+= t.toJson();
+			prefix = ",";
+		}
+		json +="]";
 		json += "}";
 		return json;
 	}
