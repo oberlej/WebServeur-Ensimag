@@ -118,7 +118,9 @@ public class TagDAO {
 		Connection conn = DBConnection.getConnection();
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement("insert into Bookmark_Tag Values("+bookmarkId+","+tagId+")");
+			PreparedStatement stmt = conn.prepareStatement("insert into Bookmark_Tag Values(?,?)");
+			stmt.setLong(1, bookmarkId);
+			stmt.setLong(1, tagId);
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
 		}finally{conn.close();}
@@ -128,7 +130,9 @@ public class TagDAO {
 		Connection conn = DBConnection.getConnection();
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement("delete from Bookmark_Tag where Bookmarks_id="+bookmarkId+" and Tags_id="+tagId+")");
+			PreparedStatement stmt = conn.prepareStatement("delete from Bookmark_Tag where Bookmarks_id=? and Tags_id=?)");
+			stmt.setLong(1, bookmarkId);
+			stmt.setLong(2, tagId);
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
 		}finally{conn.close();}
@@ -138,7 +142,9 @@ public class TagDAO {
 		Connection conn = DBConnection.getConnection();
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark_Tag Where Bookmarks_id="+bookmarkId+" and Tags_id="+tagId);
+			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark_Tag Where Bookmarks_id=? and Tags_id=?");
+			stmt.setLong(1, bookmarkId);
+			stmt.setLong(2, tagId);
 			System.out.println("Execute : "+stmt);
 			ResultSet r = stmt.executeQuery();
 			return r.getFetchSize() > 0 ? true : false;
@@ -154,7 +160,8 @@ public class TagDAO {
 		List<Bookmark> bookmarks = new ArrayList<Bookmark>();
 		
 		try{
-			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark Where id IN (Select Bookmarks_id From Bookmark_Tag Where Tags_id="+tagId+")");
+			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark Where id IN (Select Bookmarks_id From Bookmark_Tag Where Tags_id=?)");
+			stmt.setLong(1, tagId);
 			System.out.println("Execute : "+stmt);
 			ResultSet r = stmt.executeQuery();
 			
