@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -77,11 +78,31 @@ public class BookmarkDAO {
 		Connection conn = DBConnection.getConnection();
 		int res = 0;
 		try{
+			JSONArray tags = json.getJSONArray("tags");
+			json.remove("tags");
+			
+			//Insert the bookmark
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(json, "Bookmark"));
 			System.out.println("Execute : "+stmt);
 			res = stmt.executeUpdate();
+			
+			ResultSet key = stmt.getGeneratedKeys();
 			if (res == 0) {
 				System.out.println("Error during insertion of bookmark: " + json.getString("title"));
+			}
+			
+			if(key.next()){
+				long bookmarkId = key.getLong(1);
+				
+				//Create binding with its tags
+				for (int i = 0; i < tags.length(); i++) {
+					JSONObject newBinding = new JSONObject();
+					newBinding.put("Bookmarks_Id", bookmarkId);
+					newBinding.put("Tags_Id", tags.getJSONObject(i).getLong("id"));
+					stmt = conn.prepareStatement(SQLFactory.createInsertQuery(newBinding, "Bookmark_Tag"));
+					System.out.println("Execute : "+stmt);
+					stmt.executeUpdate();
+				}
 			}
 		}finally{conn.close();}
 		return res;
@@ -129,4 +150,5 @@ public class BookmarkDAO {
 		}finally{conn.close();}
 		return tags;
 	}
+	
 }
