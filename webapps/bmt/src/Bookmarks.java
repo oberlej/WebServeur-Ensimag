@@ -52,14 +52,13 @@ public class Bookmarks {
 				return;
 			}
 			// Encode the bookmark list to JSON
-			String json = "[";
-			for (int i = 0, n = bookmarks.size(); i < n; i++) {
-				Bookmark bookmark = bookmarks.get(i);
-				json += bookmark.toJson();
-				if (i < n - 1)
-					json += ", ";
+			JSONArray array = new JSONArray();
+			
+			for(Bookmark b : bookmarks){
+				array.put(new JSONObject(b.toJson()));
 			}
-			json += "]";
+			
+			String json = array.toString();
 			// Send the response
 			resp.setStatus(200);
 			resp.setContentType("application/json");
