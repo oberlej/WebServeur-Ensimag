@@ -58,8 +58,8 @@ public class BookmarkDAO {
 		Connection conn = DBConnection.getConnection();
 		try{
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, "id", "Bookmark"));
-			stmt.setLong(1, id);
-			stmt.setLong(2, user.getId());
+			stmt.setLong(1, user.getId());
+			stmt.setLong(2, id);
 			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
 			
@@ -115,11 +115,18 @@ public class BookmarkDAO {
 			JSONObject j = new JSONObject();
 			j.put("user_id", userId);
 			j.put("id", id);
-			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery(j,"Bookmark"));
 			
+			//Remove the bookmark itself
+			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery(j,"Bookmark"));
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
-
+			
+			//Remove the bindings that concerns the deleted bookmark
+			stmt = conn.prepareStatement("Delete From Bookmark_Tag Where Bookmarks_Id=?");
+			stmt.setLong(1, id);
+			System.out.println("Execute : "+stmt);
+			stmt.executeUpdate();
+			
 		}finally{conn.close();}
 
 	}
@@ -140,7 +147,8 @@ public class BookmarkDAO {
 		List<Tag> tags = new ArrayList<Tag>();
 		
 		try{
-			PreparedStatement stmt = conn.prepareStatement("Select * From Tag Where id IN (SELECT Tags_Id From Bookmark_Tag Where Bookmarks_Id="+bookmarkId+")");
+			PreparedStatement stmt = conn.prepareStatement("Select * From Tag Where id IN (SELECT Tags_Id From Bookmark_Tag Where Bookmarks_Id=?)");
+			stmt.setLong(1, bookmarkId);
 			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
 			

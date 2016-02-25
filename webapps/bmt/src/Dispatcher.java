@@ -83,9 +83,7 @@ public class Dispatcher {
 		
 		// Response to /{login}/binding
 		if (requestPath.length == 2 && "binding".equals(requestPath[1])) {
-			
 			Tags.handleBinding(req, resp, method, requestPath, queryParams, user);
-			
 			return;
 		}
 
