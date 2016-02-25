@@ -91,8 +91,11 @@ public class Tags {
 					return;
 				}else{
 					jsonObject.put("user_id", user.getId());
-					TagDAO.saveTag(jsonObject);
-					resp.setStatus(201);
+					if(TagDAO.createTag(jsonObject) == 0){
+						resp.setStatus(304);
+					}else{
+						resp.setStatus(201);
+					}
 					return;
 				}
 			} catch (SQLException e) {
@@ -128,7 +131,7 @@ public class Tags {
 			String json = null;
 
 			try {
-				Tag tag = TagDAO.getTagByName(requestPath[2], user);
+				Tag tag = TagDAO.getTagById(Long.parseLong(requestPath[2]), user);
 				if(tag != null){
 					json = tag.toJson();
 					// Send the response
@@ -156,7 +159,7 @@ public class Tags {
 					// Send the response
 					resp.setStatus(204);
 				}else{
-					// Send the response
+					//How to trigger 403 ?
 					resp.setStatus(403);
 				}
 
@@ -169,10 +172,11 @@ public class Tags {
 
 			try {
 				jsonObject.put("user_id", user.getId());
-				TagDAO.modifyTag(jsonObject);
+				TagDAO.updateTag(jsonObject);
 				resp.setStatus(204);
 				return;
 			} catch (SQLException e) {
+				//How to trigger 403 ??
 				resp.setStatus(403);
 			}
 		}
@@ -215,16 +219,12 @@ public class Tags {
 				resp.setContentType("application/json");
 				resp.getWriter().print(json);
 				return;
-			}else{
-				resp.setStatus(404);
-				return;
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
+			resp.setStatus(500);
+			return;
 		}
-
-		resp.setStatus(200);
 	}
 
 	/**
@@ -276,16 +276,23 @@ public class Tags {
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
+				resp.setStatus(500);
+				return;
 			}
 		}
 		//Handle Tag binding removal
 		else if(method == Dispatcher.RequestMethod.DELETE){
 			try {
-				TagDAO.removeTagBindingToBookmark(bookmarkId, tagId);
-				resp.setStatus(204);
+				if(TagDAO.removeTagBindingToBookmark(bookmarkId, tagId)==0){
+					resp.setStatus(403);
+				}else{
+					resp.setStatus(204);
+				}
 				return;
 			} catch (SQLException e) {
 				e.printStackTrace();
+				resp.setStatus(500);
+				return;
 			}
 		}
 	}

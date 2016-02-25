@@ -20,10 +20,12 @@ public class TagDAO {
 	/**
 	 * SQL query for user login
 	 */
-	private static final String SQL_READ_TAGS = "select id,name from Tag where user_id=?";
-	private static final String SQL_READ_TAG = "select id,name from Tag where user_id=? and name=?";
-	private static final String SQL_CREATE_TAG = "insert into Tag(name,user_id) values (?,?)";
-
+	private static final String SQL_REMOVE_TAG_BINDING_TO_BOOKMARK = "delete from Bookmark_Tag where Bookmarks_id=? and Tags_id=?";
+	private static final String SQL_BIND_TAG_TO_BOOKMARK = "insert into Bookmark_Tag Values(?,?)";
+	private static final String SQL_GET_BINDINGS = "Select * from Bookmark_Tag";
+	private static final String SQL_GET_BOOKMARKS_BINDED_TO_TAG = "Select * from Bookmark Where id IN (Select Bookmarks_id From Bookmark_Tag Where Tags_id=?)";
+	private static final String SQL_IS_TAG_BINDED_TO_BOOKMARK = "Select * from Bookmark_Tag Where Bookmarks_id=? and Tags_id=?";
+	
 	/**
 	 * Provides the tags of a user.
 	 * 
@@ -53,6 +55,7 @@ public class TagDAO {
 	
 	public static Tag getTagByName(String name, User user) throws SQLException{
 		Connection conn = DBConnection.getConnection();
+		Tag tag = null;
 		try{
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, "name", "Tag"));
 			stmt.setLong(1, user.getId());
@@ -63,10 +66,11 @@ public class TagDAO {
 			while (result.next()) {
 				long id = result.getLong(1);
 				String tagName = result.getString(2);
-				return new Tag(id, tagName);
+				tag = new Tag(id, tagName);
 			}
-			return null;
 		} finally{conn.close();}
+		
+		return tag;
 	}
 	
 	public static Tag getTagById(long id, User user) throws SQLException{
@@ -87,13 +91,16 @@ public class TagDAO {
 		} finally{conn.close();}
 	}
 	
-	public static void saveTag(JSONObject tag) throws SQLException{
+	public static int createTag(JSONObject tag) throws SQLException{
 		Connection conn = DBConnection.getConnection();
+		int res = 0;
 		try{
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createInsertQuery(tag, "Tag"));
 			System.out.println("Execute : "+stmt);
-			stmt.executeUpdate();
+			res = stmt.executeUpdate();
 		} finally{conn.close();}
+		
+		return res;
 	}
 	
 	public static void removeTag(JSONObject tag, User user) throws SQLException{
@@ -105,7 +112,7 @@ public class TagDAO {
 		} finally{conn.close();}
 	}
 	
-	public static void modifyTag(JSONObject tag) throws SQLException{
+	public static void updateTag(JSONObject tag) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 		try{
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createUpdateQuery(tag, "Tag"));
@@ -118,36 +125,38 @@ public class TagDAO {
 		Connection conn = DBConnection.getConnection();
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement("insert into Bookmark_Tag Values(?,?)");
-			stmt.setLong(1, bookmarkId);
-			stmt.setLong(1, tagId);
-			System.out.println("Execute : "+stmt);
-			stmt.executeUpdate();
-		}finally{conn.close();}
-	}
-	
-	public static void removeTagBindingToBookmark(long bookmarkId, long tagId) throws SQLException{
-		Connection conn = DBConnection.getConnection();
-
-		try{
-			PreparedStatement stmt = conn.prepareStatement("delete from Bookmark_Tag where Bookmarks_id=? and Tags_id=?)");
+			PreparedStatement stmt = conn.prepareStatement(TagDAO.SQL_BIND_TAG_TO_BOOKMARK);
 			stmt.setLong(1, bookmarkId);
 			stmt.setLong(2, tagId);
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
 		}finally{conn.close();}
+	}
+	
+	public static int removeTagBindingToBookmark(long bookmarkId, long tagId) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		int res = 0;
+		try{
+			PreparedStatement stmt = conn.prepareStatement(TagDAO.SQL_REMOVE_TAG_BINDING_TO_BOOKMARK);
+			stmt.setLong(1, bookmarkId);
+			stmt.setLong(2, tagId);
+			System.out.println("Execute : "+stmt);
+			res = stmt.executeUpdate();
+		}finally{conn.close();}
+		return res;
 	}
 	
 	public static boolean isTagBindedToBookmark(long bookmarkId, long tagId) throws SQLException{
 		Connection conn = DBConnection.getConnection();
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark_Tag Where Bookmarks_id=? and Tags_id=?");
+			PreparedStatement stmt = conn.prepareStatement(TagDAO.SQL_IS_TAG_BINDED_TO_BOOKMARK);
 			stmt.setLong(1, bookmarkId);
 			stmt.setLong(2, tagId);
 			System.out.println("Execute : "+stmt);
 			ResultSet r = stmt.executeQuery();
-			return r.getFetchSize() > 0 ? true : false;
+			r.last();
+			return r.getRow() > 0 ? true : false;
 		}catch(Exception e){
 		System.out.println("");
 		return false;
@@ -160,13 +169,14 @@ public class TagDAO {
 		List<Bookmark> bookmarks = new ArrayList<Bookmark>();
 		
 		try{
-			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark Where id IN (Select Bookmarks_id From Bookmark_Tag Where Tags_id=?)");
+			PreparedStatement stmt = conn.prepareStatement(TagDAO.SQL_GET_BOOKMARKS_BINDED_TO_TAG);
 			stmt.setLong(1, tagId);
 			System.out.println("Execute : "+stmt);
 			ResultSet r = stmt.executeQuery();
 			
 			while(r.next()){
-				bookmarks.add(new Bookmark(r.getLong("id"), r.getString("description"), r.getString("link"), r.getString("title")));
+				List<Tag> tags = BookmarkDAO.getBookmarkTagsList(r.getLong("id"));
+				bookmarks.add(new Bookmark(r.getLong("id"), r.getString("description"), r.getString("link"), r.getString("title"),tags));
 			}
 		}catch(Exception e){
 			System.out.println("");
@@ -181,7 +191,7 @@ public class TagDAO {
 		List<Binding> bindings = new ArrayList<Binding>();
 		
 		try{
-			PreparedStatement stmt = conn.prepareStatement("Select * from Bookmark_Tag");
+			PreparedStatement stmt = conn.prepareStatement(TagDAO.SQL_GET_BINDINGS);
 			System.out.println("Execute : "+stmt);
 			ResultSet r = stmt.executeQuery();
 			

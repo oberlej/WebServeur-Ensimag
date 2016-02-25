@@ -108,12 +108,8 @@ public class Dispatcher {
 				Bookmarks.handleBookmarkList(req, resp, method, requestPath, queryParams, user);
 			else if (requestPath.length == 3)
 				Bookmarks.handleBookmark(req, resp, method, requestPath, queryParams, user);
-			/*else if (requestPath.length == 4)
-				Bookmarks.handleTagBookmarks(req, resp, method, requestPath, queryParams, user);
-			else if (requestPath.length == 5)
-				Bookmarks.handleTagBookmark(req, resp, method, requestPath, queryParams, user);
 			else
-				resp.sendError(404);*/
+				resp.sendError(404);
 			return;
 		}
 

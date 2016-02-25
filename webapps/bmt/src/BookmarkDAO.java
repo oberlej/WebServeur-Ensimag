@@ -151,15 +151,16 @@ public class BookmarkDAO {
 
 	}
 
-	public static void updateBookmark(JSONObject bookmarkJson) throws SQLException{
+	public static int updateBookmark(JSONObject bookmarkJson) throws SQLException{
 		Connection conn = DBConnection.getConnection();
-
+		int res = 0;
 		try{
 			JSONArray tags = bookmarkJson.getJSONArray("tags");
 			bookmarkJson.remove("tags");
 
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createUpdateQuery(bookmarkJson, "Bookmark"));
 			System.out.println("Execute : "+stmt);
+			res = stmt.executeUpdate();
 
 			//Delete all the old tags
 			BookmarkDAO.deleteBookmarkBindings(bookmarkJson.getLong("id"));
@@ -168,7 +169,7 @@ public class BookmarkDAO {
 			BookmarkDAO.bindTagsToBookmark(bookmarkJson.getLong("id"), tags);
 
 		}finally{conn.close();}
-
+		return res;
 	}
 
 	public static List<Tag> getBookmarkTagsList(long bookmarkId) throws SQLException{

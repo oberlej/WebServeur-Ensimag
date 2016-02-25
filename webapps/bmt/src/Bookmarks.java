@@ -144,13 +144,16 @@ public class Bookmarks {
 			JSONObject jsonObject = new JSONObject(queryParams.get("json").get(0));
 			jsonObject.put("user_id", user.getId());
 			try{
-				BookmarkDAO.updateBookmark(jsonObject);
+				if(BookmarkDAO.updateBookmark(jsonObject)==0){
+					resp.setStatus(403);
+				}else{
+					resp.setStatus(204);
+				}
 			} catch (SQLException ex) {
 				resp.setStatus(500);
 				System.out.println(ex);
 				return;
 			}
-			
 			return;
 		}
 
@@ -163,6 +166,9 @@ public class Bookmarks {
 				System.out.println(ex);
 				return;
 			}
+			
+			resp.setStatus(204);
+			return;
 		}
 
 		// Other
