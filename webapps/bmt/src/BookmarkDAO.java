@@ -29,13 +29,15 @@ public class BookmarkDAO {
 	public static List<Bookmark> getBookmarks(User user) throws SQLException {
 		List<Bookmark> list = new ArrayList<Bookmark>();
 		Connection conn = DBConnection.getConnection();
+		
 		try{
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createSelectQueryByAttr(COLUMNS, null, "Bookmark"));
 			stmt.setLong(1, user.getId());
 			System.out.println("Execute : "+stmt);
 			ResultSet result = stmt.executeQuery();
 			while (result.next()) {
-				Bookmark bookmark = new Bookmark(result.getLong(1), result.getString(2), result.getString(3), result.getString(4));
+				List<Tag> tags = BookmarkDAO.getBookmarkTagsList(result.getLong(1));
+				Bookmark bookmark = new Bookmark(result.getLong(1), result.getString(2), result.getString(3), result.getString(4),tags);
 				list.add(bookmark);
 			}
 
@@ -61,7 +63,8 @@ public class BookmarkDAO {
 			ResultSet result = stmt.executeQuery();
 			
 			if(result.next()) {
-				b = new Bookmark(result.getLong(1), result.getString(2), result.getString(3), result.getString(4));
+				List<Tag> tags = BookmarkDAO.getBookmarkTagsList(result.getLong(1));
+				b = new Bookmark(result.getLong(1), result.getString(2), result.getString(3), result.getString(4),tags);
 			}else{
 				System.out.println("No Bookmark found for id: " + id);
 			}
@@ -109,5 +112,21 @@ public class BookmarkDAO {
 
 		}finally{conn.close();}
 
+	}
+	
+	public static List<Tag> getBookmarkTagsList(long bookmarkId) throws SQLException{
+		Connection conn = DBConnection.getConnection();
+		List<Tag> tags = new ArrayList<Tag>();
+		
+		try{
+			PreparedStatement stmt = conn.prepareStatement("Select * From Tag Where id IN (SELECT Tags_Id From Bookmark_Tag Where Bookmarks_Id="+bookmarkId+")");
+			System.out.println("Execute : "+stmt);
+			ResultSet result = stmt.executeQuery();
+			
+			while(result.next()){
+				tags.add(new Tag(result.getLong("id"), result.getString("name")));
+			}
+		}finally{conn.close();}
+		return tags;
 	}
 }
