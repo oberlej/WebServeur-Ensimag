@@ -1,13 +1,27 @@
 h1 {
 	text-align: center;
 }
-
 table {
-	border: 1px solid black;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
 }
 
-td{
-	min-width: 100px;
+table td, table th {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+table tr:nth-child(even){background-color: #f2f2f2}
+
+table tr:hover {background-color: #ddd;}
+
+table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: grey;
+    color: white;
 }
 .ok{
 	background-color: green;

@@ -89,10 +89,13 @@ public class BookmarkDAO {
 			ResultSet key = stmt.getGeneratedKeys();
 			if (res == 0) {
 				System.out.println("Error during insertion of bookmark: " + json.getString("title"));
-			}
-
-			if(key.next()){
-				long bookmarkId = key.getLong(1);
+			}else{
+				long bookmarkId = 0;
+				if(key.next()){
+					bookmarkId = key.getLong(1);
+				}else{
+					bookmarkId = json.getLong("id");
+				}
 				BookmarkDAO.bindTagsToBookmark(bookmarkId, tags);
 			}
 		}finally{conn.close();}
@@ -122,6 +125,9 @@ public class BookmarkDAO {
 		Connection conn = DBConnection.getConnection();
 
 		try{
+			//Remove the bindings
+			BookmarkDAO.deleteBookmarkBindings(id);
+			
 			JSONObject j = new JSONObject();
 			j.put("user_id", userId);
 			j.put("id", id);
@@ -130,9 +136,6 @@ public class BookmarkDAO {
 			PreparedStatement stmt = conn.prepareStatement(SQLFactory.createDeleteQuery(j,"Bookmark"));
 			System.out.println("Execute : "+stmt);
 			stmt.executeUpdate();
-
-			BookmarkDAO.deleteBookmarkBindings(id);
-
 		}finally{conn.close();}
 
 	}

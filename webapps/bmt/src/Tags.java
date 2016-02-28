@@ -99,7 +99,7 @@ public class Tags {
 					return;
 				}
 			} catch (SQLException e) {
-				System.out.println(e);
+				resp.setStatus(500);
 				e.printStackTrace();
 			}
 		}
@@ -145,6 +145,7 @@ public class Tags {
 				}
 
 			} catch (SQLException e) {
+				resp.setStatus(500);
 				e.printStackTrace();
 			}
 		}else if (method == Dispatcher.RequestMethod.DELETE) {
@@ -164,6 +165,7 @@ public class Tags {
 				}
 
 			} catch (SQLException e) {
+				resp.setStatus(403);
 				e.printStackTrace();
 			}
 		}else if (method == Dispatcher.RequestMethod.PUT) {
@@ -259,6 +261,7 @@ public class Tags {
 					return;
 				}
 			} catch (SQLException e) {
+				resp.setStatus(500);
 				e.printStackTrace();
 			}
 		}
@@ -326,6 +329,7 @@ public class Tags {
 			}
 			
 		} catch (SQLException e) {
+			resp.setStatus(500);
 			e.printStackTrace();
 		}
 	}

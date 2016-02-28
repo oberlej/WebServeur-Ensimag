@@ -71,6 +71,10 @@ public class Bookmarks {
 		if (method == Dispatcher.RequestMethod.POST) {
 			JSONObject json = new JSONObject(queryParams.get("json").get(0));
 			json.put("user_id", user.getId().toString());
+			//check if the bookmark has tags
+			if(!json.has("tags")){
+				json.put("tags", new JSONArray());
+			}
 			try{
 				int res = BookmarkDAO.createBookmark(json);
 				if(res == 0){
@@ -80,12 +84,7 @@ public class Bookmarks {
 				}
 			} catch (SQLException ex) {
 				System.out.println(ex);
-				if(ex.getMessage().contains("CONSTRAINT_INDEX_A ON PUBLIC.BOOKMARK(USER_ID, LINK)")){
-					//bookmark exists already
-					resp.setStatus(304);
-				}else{
-					resp.setStatus(500);
-				}
+				resp.setStatus(304);
 			}
 			return;
 		}
@@ -150,7 +149,7 @@ public class Bookmarks {
 					resp.setStatus(204);
 				}
 			} catch (SQLException ex) {
-				resp.setStatus(500);
+				resp.setStatus(403);
 				System.out.println(ex);
 				return;
 			}
@@ -162,7 +161,7 @@ public class Bookmarks {
 			try{
 				BookmarkDAO.deleteBookmark(user.getId(), Long.parseLong(requestPath[2]));
 			} catch (SQLException ex) {
-				resp.setStatus(500);
+				resp.setStatus(403);
 				System.out.println(ex);
 				return;
 			}
